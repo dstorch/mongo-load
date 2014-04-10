@@ -6,6 +6,7 @@
 
 from copy import deepcopy
 from src import loadutils
+from subprocess import Popen
 from os import path, remove
 import json
 import sys
@@ -32,16 +33,17 @@ class WorkloadGenerator:
 
         self.idnum = idnum
         self.ops = ops
+        self.params = params
 
         # Generate the path name at which we will store this workload.
-        workload_path = path.join(params.workload_dir, "workload" + str(idnum))
+        self.workload_path = path.join(params.workload_dir, "workload" + str(idnum))
 
-        if path.exists(workload_path):
-            sys.stderr.write("Warning: file '" + workload_path + "' exists."
+        if path.exists(self.workload_path):
+            sys.stderr.write("Warning: file '" + self.workload_path + "' exists."
                              + " It is being removed.\n")
-            remove(workload_path)
+            remove(self.workload_path)
 
-        self.workload_file = open(workload_path, "w")
+        self.workload_file = open(self.workload_path, "w")
 
         # Do the same number of ops regardless of the concurrency factor.
         self.workload_size = params.workload_size / params.concurrency
@@ -72,3 +74,12 @@ class WorkloadGenerator:
                        indent=4, separators=(', ', ': '))
         )
         self.workload_file.close()
+
+    def spawn_worker(self):
+        args = ["python", "run-workload.py"]
+        args.extend(["-f", self.workload_path])
+        args.extend(["-m", self.params.mongod_host])
+        args.extend(["-p", str(self.params.mongod_port)])
+        args.extend(["-d", self.params.dbname])
+        args.extend(["-c", self.params.collname])
+        return Popen(args)

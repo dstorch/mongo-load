@@ -24,6 +24,9 @@ def main():
         load_test.init_collection()
         print "Generating workloads..."
         load_test.generate_workloads()
+        print "Running test..."
+        elapsed = load_test.run()
+        print "Total time (ms): ", elapsed
     except ValueError as e:
         sys.stderr.write(str(e) + "\n")
         sys.exit(1)

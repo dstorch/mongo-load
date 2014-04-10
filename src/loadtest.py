@@ -8,6 +8,7 @@ from loadinit import LoadTestInitializer
 from loadgenerator import WorkloadGenerator
 from os import path, mkdir
 import sys
+import time
 
 class LoadTestConfigParams:
 
@@ -110,3 +111,20 @@ class LoadTest:
             while not workload.done():
                 workload.generate_next()
             workload.flush_to_disk()
+
+
+    # Spawn subprocesses to run each workload.
+    def run(self):
+        start_time = time.time()
+
+        # Spawn subprocesses to do the work.
+        pids = [workload.spawn_worker() for workload in self.workloads]
+        # Wait for subprocesses to return:
+        exit_codes = [p.wait() for p in pids]
+        # Check that all subprocesses finished successfully.
+        for code in exit_codes:
+            if code != 0:
+                sys.stderr.write("Warning: subprocess returned with non-success exit code.\n")
+
+        elapsed_millis = (time.time() - start_time) * 1000.0
+        return elapsed_millis
