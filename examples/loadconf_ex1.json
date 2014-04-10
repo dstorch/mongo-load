@@ -1,0 +1,24 @@
+{
+   "collectionName": "cats",
+   "collectionSize": 10000,
+   "mongodHost": "catserver.mongodb.com",
+   "mongodPort": 27017,
+   "indices": [{"species": 1, "age": 1}, {"height": -1}],
+   "docs": [
+      {"proto":
+         {
+            "species": {"@oneOf": ["leopard", "tiger", "lion"]},
+            "age": {"@uniform": {"start": 0, "end": 30}},
+            "height": {"@normal": {"mu": 24, "sigma": 2}}
+         },
+       "prob": 1}
+   ],
+   "ops": [
+      {"proto":
+         {
+            "query": {"height": {"$gt": {"@normal": {"mu": 24, "sigma": 2}}}},
+            "projection": {"@uniform": {"start": 0, "end": 30}}
+          },
+       "prob": 1}
+   ]
+}
