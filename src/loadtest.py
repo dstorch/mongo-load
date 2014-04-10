@@ -32,7 +32,7 @@ class LoadTestConfigParams:
             self.cleanup_coll = loadconf["cleanup_coll"]
 
 
-class LoadTestConfig:
+class LoadTest:
 
     # Known top-level field names.
     toplevel_fields = [

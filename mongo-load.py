@@ -2,7 +2,7 @@ import json
 import sys
 import os.path
 
-from src import loadconf
+from src import loadtest
 
 def main():
     if not len(sys.argv) == 2:
@@ -19,8 +19,8 @@ def main():
     confdata = json.load(filehandle)
 
     try:
-        testconfig = loadconf.LoadTestConfig(confdata)
-        testconfig.init_collection()
+        load_test = loadtest.LoadTest(confdata)
+        load_test.init_collection()
     except ValueError as e:
         print e
         sys.exit(1)
