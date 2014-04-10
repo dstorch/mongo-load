@@ -50,7 +50,7 @@ class WorkloadGenerator:
                 if len(el) != 1:
                     raise ValueError("Fatal: insert ops must have only the 'insert' field.")
             elif "remove" in proto:
-                validFields = ["remove", "justOne"]
+                validFields = ["remove", "multi"]
                 for field in proto:
                     if field not in valid_fields:
                         raise ValueError("Fatal: unknown field '" + field + "' in remove op.")

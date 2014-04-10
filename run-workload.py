@@ -61,18 +61,24 @@ def run_workload(coll, workload_data):
 
         # Updates
         elif "update" in entry:
-            # TODO
-            pass
+            multi = False
+            if "multi" in entry:
+                multi = entry["multi"]
+            upsert = False
+            if "upsert" in entry:
+                upsert = entry["upsert"]
+            coll.update(entry["update"], entry["spec"], upsert=upert, multi=multi)
 
         # Inserts
         elif "insert" in entry:
-            # TODO
-            pass
+            coll.insert(entry["insert"])
 
         # Removes
         elif "remove" in entry:
-            # TODO
-            pass
+            multi = True
+            if "multi" in entry:
+                multi = entry["multi"]
+            coll.remove(entry["remove"], multi=multi)
 
 
 def main():
