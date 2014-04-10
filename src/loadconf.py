@@ -69,6 +69,7 @@ class LoadTestConfig:
         self.initializer = LoadTestInitializer(loadconf["docs"], loadconf["indices"], self.params)
 
     def init_collection(self):
+        self.initializer.build_indices()
         while not self.initializer.done():
             self.initializer.generate_next()
 

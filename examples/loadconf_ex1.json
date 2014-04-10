@@ -8,8 +8,8 @@
       {"proto":
          {
             "species": {"@oneOf": ["leopard", "tiger", "lion"]},
-            "age": {"@uniform": {"start": 0, "end": 30}},
-            "height": {"@normal": {"mu": 24, "sigma": 2}}
+            "age": {"@uniform": {"start": 0, "end": 30, "type": "int"}},
+            "height": {"@normal": {"mu": 24, "sigma": 2, "type": "float"}}
          },
        "prob": 1}
    ],
