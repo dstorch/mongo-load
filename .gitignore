@@ -5,6 +5,10 @@ __pycache__/
 # vim
 *.swp
 
+# Program logic makes a workloads/ dir by default
+# which should be ignored.
+workloads/
+
 # C extensions
 *.so
 

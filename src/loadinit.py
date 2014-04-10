@@ -14,7 +14,6 @@ class LoadTestInitializer:
     generated = 0
 
     def __init__(self, docs, indices, params):
-
         if len(docs) == 0:
             print "Warning: empty 'docs' array. Your test collection will be empty."
 

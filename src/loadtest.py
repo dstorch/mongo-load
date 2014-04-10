@@ -5,6 +5,9 @@
 ###########################################################
 
 from loadinit import LoadTestInitializer
+from loadgenerator import WorkloadGenerator
+from os import path, mkdir
+import sys
 
 class LoadTestConfigParams:
 
@@ -21,6 +24,10 @@ class LoadTestConfigParams:
     mongod_host = "localhost"
     mongod_port = 27017
 
+    concurrency = 1
+    workload_size = 1000
+    workload_dir = "workloads"
+
     def __init__(self, loadconf):
         if "dbName" in loadconf:
             self.dbname = loadconf["dbName"]
@@ -30,6 +37,16 @@ class LoadTestConfigParams:
             self.collsize = loadconf["collectionSize"]
         if "cleanupColl" in loadconf:
             self.cleanup_coll = loadconf["cleanup_coll"]
+        if "mongodHost" in loadconf:
+            self.mongod_host = loadconf["mongodHost"]
+        if "mongodPort" in loadconf:
+            self.mongod_port = loadconf["mongodPort"]
+        if "concurrency" in loadconf:
+            self.concurrency = loadconf["concurrency"]
+        if "workloadSize" in loadconf:
+            self.workload_size = loadconf["workloadSize"]
+        if "workloadDir" in loadconf:
+            self.workload_dir = loadconf["workloadDir"]
 
 
 class LoadTest:
@@ -42,6 +59,9 @@ class LoadTest:
         "mongodHost",
         "mongodPort",
         "indices",
+        "concurrency",
+        "workloadSize",
+        "workloadDir",
         "docs",
         "ops"
     ]
@@ -65,8 +85,19 @@ class LoadTest:
                 raise ValueError("Fatal: unknown config field: '" + f + "'.")
 
         self.params = LoadTestConfigParams(loadconf)
-
         self.initializer = LoadTestInitializer(loadconf["docs"], loadconf["indices"], self.params)
+
+        # Create the workload directory, printing a warning if it already exists.
+        if path.exists(self.params.workload_dir):
+            sys.stderr.write("Warning: directory already exists: "
+                             + self.params.workload_dir + "\n")
+        else:
+            mkdir(self.params.workload_dir)
+
+        self.workloads = []
+        for i in range(0, self.params.concurrency):
+            self.workloads.append(WorkloadGenerator(i, self.raw_config["ops"], self.params))
+
 
     def init_collection(self):
         self.initializer.build_indices()
@@ -74,3 +105,8 @@ class LoadTest:
             self.initializer.generate_next()
 
 
+    def generate_workloads(self):
+        for workload in self.workloads:
+            while not workload.done():
+                workload.generate_next()
+            workload.flush_to_disk()

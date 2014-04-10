@@ -20,10 +20,15 @@ def main():
 
     try:
         load_test = loadtest.LoadTest(confdata)
+        print "Initializing test collection..."
         load_test.init_collection()
+        print "Generating workloads..."
+        load_test.generate_workloads()
     except ValueError as e:
-        print e
+        sys.stderr.write(str(e) + "\n")
         sys.exit(1)
+
+    print "Test complete."
 
 if __name__ == "__main__":
     main()

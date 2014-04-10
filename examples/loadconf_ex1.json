@@ -1,8 +1,10 @@
 {
    "collectionName": "cats",
    "collectionSize": 10000,
-   "mongodHost": "catserver.mongodb.com",
+   "mongodHost": "localhost",
    "mongodPort": 27017,
+   "concurrency": 2,
+   "workloadSize": 500,
    "indices": [{"species": 1, "age": 1}, {"height": -1}],
    "docs": [
       {"proto":
@@ -16,8 +18,8 @@
    "ops": [
       {"proto":
          {
-            "query": {"height": {"$gt": {"@normal": {"mu": 24, "sigma": 2}}}},
-            "projection": {"@uniform": {"start": 0, "end": 30}}
+            "query": {"height": {"$gt": {"@normal": {"mu": 24, "sigma": 2, "type": "int"}}}},
+            "projection": {"_id": 0, "species": 1, "age": 1}
           },
        "prob": 1}
    ]
