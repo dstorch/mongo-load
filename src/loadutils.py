@@ -7,6 +7,7 @@
 
 import numpy as np
 import collections
+from pymongo import ASCENDING, DESCENDING
 
 def expand_uniform(proto, key, parent_proto):
     # Error checking
@@ -86,3 +87,14 @@ def expand_prototype(proto):
 def discrete_sample(probs, numsamples):
     bins = np.add.accumulate(probs)
     return np.digitize(np.random.random_sample(numsamples), bins)
+
+def convert_keypattern(kp):
+    keydir_pairs = []
+    for field in kp:
+        direction = int(kp[field])
+        if direction != 1 and direction != -1:
+            raise ValueError("Fatal: index direction must be either "
+                             + "1 (ascending) or -1 (descending)");
+        pair = (field, (ASCENDING if direction == 1 else DESCENDING))
+        keydir_pairs.append(pair)
+    return keydir_pairs

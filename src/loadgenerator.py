@@ -20,7 +20,7 @@ class WorkloadGenerator:
         if len(ops) == 0:
             print "Warning: empty 'ops' array. No load will be applied."
 
-        # Validate 'docs'.
+        # Validate 'ops'.
         for el in ops:
             if not isinstance(el, dict):
                 raise ValueError("Fatal: all elements of 'ops' must be subdocuments.")
@@ -30,6 +30,33 @@ class WorkloadGenerator:
                 raise ValueError("Fatal: missing 'proto' field found in 'ops' array.")
             if "prob" not in el:
                 raise ValueError("Fatal: missing 'prob' field found in 'ops' array.")
+
+            proto = el["proto"]
+            if "query" in proto:
+                valid_fields = ["query", "projection", "sort", "limit", "skip"]
+                for field in proto:
+                    if field not in valid_fields:
+                        raise ValueError("Fatal: unknown field '" + field + "' in query op.")
+            elif "update" in proto:
+                valid_fields = ["update", "spec", "multi", "upsert"]
+
+                if "spec" not in proto:
+                    raise ValueError("Fatal: missing 'spec' field for update op.")
+
+                for field in proto:
+                    if field not in valid_fields:
+                        raise ValueError("Fatal: unknown field '" + field + "' in update op.")
+            elif "insert" in proto:
+                if len(el) != 1:
+                    raise ValueError("Fatal: insert ops must have only the 'insert' field.")
+            elif "remove" in proto:
+                validFields = ["remove", "justOne"]
+                for field in proto:
+                    if field not in valid_fields:
+                        raise ValueError("Fatal: unknown field '" + field + "' in remove op.")
+            else:
+                raise ValueError("Fatal: ops array entry does not contain "
+                                 + "'query', 'update', 'insert', or 'remove'.")
 
         self.idnum = idnum
         self.ops = ops

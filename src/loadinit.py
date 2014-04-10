@@ -57,15 +57,7 @@ class LoadTestInitializer:
             if not isinstance(index, dict):
                 raise ValueError("Fatal: all index specs must be subobjects.")
 
-            keydir_pairs = []
-            for field in index:
-                direction = int(index[field])
-                if direction != 1 and direction != -1:
-                    raise ValueError("Fatal: index direction must be either "
-                                     + "1 (ascending) or -1 (descending)");
-                pair = (field, (ASCENDING if direction == 1 else DESCENDING))
-                keydir_pairs.append(pair)
-
+            keydir_pairs = loadutils.convert_keypattern(index)
             self.test_collection.ensure_index(keydir_pairs)
 
     def done(self):

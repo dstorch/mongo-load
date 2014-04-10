@@ -2,6 +2,7 @@ import json
 import sys
 from pymongo import MongoClient
 from argparse import ArgumentParser
+from src import loadutils
 
 
 def parse_arguments():
@@ -23,16 +24,55 @@ def parse_arguments():
 
 def run_workload(coll, workload_data):
     for entry in workload_data:
+
+        #
+        # Handle each CRUD operation in turn.
+        #
+
+        # Queries
         if "query" in entry:
             query = entry["query"]
+
             proj = {}
             if "projection" in entry:
                 proj = entry["projection"]
 
+            limit = 0
+            if "limit" in entry:
+                 limit = entry["limit"]
+
+            skip = 0
+            if "skip" in entry:
+                skip = entry["skip"]
+
             cursor = coll.find(query, proj)
+            if "limit" in entry:
+                cursor = cursor.limit(entry["limit"])
+            if "skip" in entry:
+                cursor = cursor.limit(entry["skip"])
+            if "sort" in entry:
+                kp = loadutils.convert_keypattern(entry["sort"])
+                cursor = cursor.sort(kp)
+
+            # Run the query to completion.
             count = 0
             for res in cursor:
                 count += 1
+
+        # Updates
+        elif "update" in entry:
+            # TODO
+            pass
+
+        # Inserts
+        elif "insert" in entry:
+            # TODO
+            pass
+
+        # Removes
+        elif "remove" in entry:
+            # TODO
+            pass
 
 
 def main():
