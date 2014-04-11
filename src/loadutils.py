@@ -5,6 +5,7 @@
 #
 ###########################################################
 
+from copy import deepcopy
 import numpy as np
 import collections
 from pymongo import ASCENDING, DESCENDING
@@ -65,14 +66,40 @@ def expand_normal(proto, key, parent_proto):
     else:
         parent_proto[key] = sample
 
+def expand_array(proto, key, parent_proto):
+    # Error checking
+    if not isinstance(proto, dict):
+        raise ValueError("Fatal: @array requires a subobject.")
+    if len(proto) != 2:
+        raise ValueError("Fatal: @array requires exactly two fields.")
+    if "maxSize" not in proto:
+        raise ValueError("Fatal: @array requires a 'maxSize' field.")
+    if "docs" not in proto:
+        raise ValueError("Fatal: @array requires an 'docs' field.")
+    if not isinstance(proto["docs"], dict):
+        raise ValueError("Fatal: @array 'docs' field must be a subobject.")
+
+    maxSize = int(proto["maxSize"])
+    size = np.random.randint(0, maxSize+1)
+    docs = proto["docs"]
+
+    # Generate the subdocuments.
+    parent_proto[key] = []
+    for i in range(0, size):
+        to_expand = deepcopy(docs)
+        expand_prototype(to_expand)
+        parent_proto[key].append(to_expand)
+
+
 expansion_map = {
     "@uniform": expand_uniform,
     "@oneOf": expand_oneof,
-    "@normal": expand_normal
+    "@normal": expand_normal,
+    "@array": expand_array
 }
 
 def expand_prototype_impl(proto, parent_key, parent_proto):
-    if isinstance(proto, collections.Iterable):
+    if isinstance(proto, dict):
         for key in proto:
             if key[0] == "@":
                 if key not in expansion_map:

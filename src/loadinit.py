@@ -50,6 +50,8 @@ class LoadTestInitializer:
         # Sample from the discrete probability distribution defined by the "prob"
         # values in the doc array
         probs = [float(d["prob"]) for d in docs]
+        if sum(probs) != 1.0:
+            raise ValueError("Fatal: probabilities in 'docs' specification do not add to 1.0")
         self.doc_sample = loadutils.discrete_sample(probs, self.params.collsize)
 
     def build_indices(self):

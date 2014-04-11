@@ -67,7 +67,7 @@ def run_workload(coll, workload_data):
             upsert = False
             if "upsert" in entry:
                 upsert = entry["upsert"]
-            coll.update(entry["update"], entry["spec"], upsert=upert, multi=multi)
+            coll.update(entry["update"], entry["spec"], upsert=upsert, multi=multi)
 
         # Inserts
         elif "insert" in entry:

@@ -78,6 +78,8 @@ class WorkloadGenerator:
         # Sample from the discrete probability distribution defined by the "prob"
         # values in the ops array.
         probs = [float(d["prob"]) for d in ops]
+        if sum(probs) != 1.0:
+            raise ValueError("Fatal: probabilities in 'ops' specification do not add to 1.0")
         self.ops_sample = loadutils.discrete_sample(probs, self.workload_size)
 
     def done(self):
