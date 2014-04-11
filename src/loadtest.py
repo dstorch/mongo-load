@@ -20,7 +20,6 @@ class LoadTestConfigParams:
 
     collname = "loadtest"
     collsize = 1000
-    cleanup_coll = False
 
     mongod_host = "localhost"
     mongod_port = 27017
@@ -36,8 +35,6 @@ class LoadTestConfigParams:
             self.collname = loadconf["collectionName"]
         if "collectionSize" in loadconf:
             self.collsize = loadconf["collectionSize"]
-        if "cleanupColl" in loadconf:
-            self.cleanup_coll = loadconf["cleanup_coll"]
         if "mongodHost" in loadconf:
             self.mongod_host = loadconf["mongodHost"]
         if "mongodPort" in loadconf:
